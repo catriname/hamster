@@ -16,7 +16,7 @@ BASE_DIR="$(dirname "$SCRIPT_DIR")"
 LOG_FILE="$BASE_DIR/logs/aprs_chatty_x.log"
 
 # Path to APRS Chatty X (adjust this path as needed)
-APRS_CHATTY_X_PATH="/mnt/c/Users/email/source/repos/catriname/APRS-Chatty-X"
+APRS_CHATTY_X_PATH="/home/ark/APRS-Chatty-X"
 APRS_EXECUTABLE="$APRS_CHATTY_X_PATH/APRS-Chatty-X/bin/Release/net6.0/APRS-Chatty-X"
 
 # Function to log messages
@@ -123,8 +123,8 @@ check_aprs_chatty_x() {
 clone_aprs_chatty_x() {
     log "${BLUE}Cloning APRS Chatty X repository...${NC}"
     
-    # You'll need to provide the actual repository URL
-    local repo_url="https://github.com/yourusername/APRS-Chatty-X.git"  # Replace with actual URL
+    # Clone the APRS Chatty X repository
+    local repo_url="https://github.com/catriname/APRS-Chatty-X.git"
     
     cd "$(dirname "$APRS_CHATTY_X_PATH")"
     git clone "$repo_url" "$(basename "$APRS_CHATTY_X_PATH")"
