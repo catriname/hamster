@@ -1,0 +1,34 @@
+# Compiled binaries
+bin/*.exe
+bin/direwolf
+bin/qsstv
+bin/aprs-chatty-x
+
+# Build artifacts
+*.o
+*.so
+*.a
+build/
+dist/
+
+# Logs
+logs/
+*.log
+
+# User configurations (keep templates)
+config/*.conf
+!config/*.template
+
+# Cache and temporary files
+.cache/
+tmp/
+*.tmp
+
+# Package downloads
+downloads/
+*.tar.gz
+*.zip
+*.deb
+
+# User data
+user_data/
