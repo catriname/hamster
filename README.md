@@ -1,10 +1,10 @@
 # Hamster - Ham Radio Manager
 
-A dedicated ham radio application manager for ArkOS Linux systems.
+A dedicated ham radio application manager for Linux systems.
 
 ## Overview
 
-Hamster provides a comprehensive menu interface for managing and launching ham radio applications on ArkOS. This is a dedicated ham radio system that replaces the gaming interface with professional amateur radio tools.
+Hamster provides a comprehensive menu interface for managing and launching ham radio applications on Linux. This professional amateur radio suite adapts to your environment - from Raspberry Pi touchscreens to desktop systems to gaming consoles.
 
 ## Features
 
@@ -37,7 +37,7 @@ cd hamster
 
 ## Requirements
 
-- ArkOS Linux or compatible Linux distribution
+- Linux distribution (Ubuntu, Debian, Raspberry Pi OS, etc.)
 - ~10GB available space for complete ham radio suite
 - Audio interface for radio operations (USB or built-in)
 - Internet connection for dependency installation

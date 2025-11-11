@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+# Hamster Launcher - Intelligent launcher for optimal experience
+# Detects environment and launches the best version
+#
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Function to detect environment type
+detect_environment() {
+    # Check if Raspberry Pi
+    if grep -q "BCM\|Raspberry" /proc/cpuinfo 2>/dev/null; then
+        echo "raspberry_pi"
+        return
+    fi
+    
+    # Check if gaming console
+    if [ -f /proc/device-tree/model ]; then
+        local model=$(cat /proc/device-tree/model 2>/dev/null | tr '[:upper:]' '[:lower:]')
+        if echo "$model" | grep -q "rg\|anbernic\|powkiddy\|retroid"; then
+            echo "gaming_console"
+            return
+        fi
+    fi
+    
+    # Check for desktop environment
+    if [ -n "$DESKTOP_SESSION" ] || [ -n "$XDG_CURRENT_DESKTOP" ]; then
+        echo "desktop"
+        return
+    fi
+    
+    echo "minimal"
+}
+
+# Function to check GUI availability
+has_gui() {
+    command -v python3 >/dev/null 2>&1 && \
+    python3 -c "import tkinter" 2>/dev/null && \
+    [ -n "$DISPLAY" -o -n "$WAYLAND_DISPLAY" ]
+}
+
+# Function to check for touch input
+has_touch() {
+    [ -d /dev/input ] && \
+    find /dev/input -name "event*" -exec grep -l "TOUCH" {} \; 2>/dev/null | head -1 >/dev/null
+}
+
+# Detect the environment
+ENV_TYPE=$(detect_environment)
+
+echo "Hamster Ham Radio Manager"
+echo "Detected environment: $ENV_TYPE"
+
+# Choose the best launcher based on environment and capabilities
+if has_gui; then
+    case "$ENV_TYPE" in
+        "raspberry_pi"|"desktop"|"gaming_console")
+            echo "Starting adaptive GUI version..."
+            exec python3 "$SCRIPT_DIR/hamster-adaptive.py"
+            ;;
+        *)
+            echo "Starting basic GUI version..."
+            exec python3 "$SCRIPT_DIR/hamster-gui.py"
+            ;;
+    esac
+else
+    echo "No GUI available, starting terminal version..."
+    exec "$SCRIPT_DIR/hamster"
+fi

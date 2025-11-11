@@ -592,7 +592,9 @@ install_ham_tools() {
                           joystick jstest-gtk evtest \
                           network-manager nmcli \
                           ssh openssh-server \
-                          bluetooth bluez bluez-tools
+                          bluetooth bluez bluez-tools \
+                          python3 python3-tk python3-pip \
+                          zenity xdg-utils
             ;;
         yum)
             yum install -y pavucontrol alsa-utils pulseaudio-utils sox \
@@ -600,7 +602,9 @@ install_ham_tools() {
                           joystick evtest \
                           NetworkManager \
                           openssh-server \
-                          bluez bluez-utils
+                          bluez bluez-utils \
+                          python3 python3-tkinter \
+                          zenity
             ;;
         pacman)
             pacman -S --noconfirm pavucontrol alsa-utils pulseaudio sox \
@@ -608,7 +612,9 @@ install_ham_tools() {
                           joyutils evtest \
                           networkmanager \
                           openssh \
-                          bluez bluez-utils
+                          bluez bluez-utils \
+                          python python-pip tk \
+                          zenity
             ;;
     esac
     
@@ -790,7 +796,7 @@ show_summary() {
     log "   • alsamixer - Terminal audio mixer"
     log "   • minicom/picocom - Serial terminal (for radio control)"
     log ""
-    log "${GREEN}Your ArkOS ham radio station is ready!${NC}"
+    log "${GREEN}Your Linux ham radio station is ready!${NC}"
     log "${BLUE}Remember: You need an amateur radio license to transmit${NC}"
 }
 

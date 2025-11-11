@@ -25,7 +25,7 @@ show_header() {
     echo "    ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝"
     echo -e "${NC}"
     echo -e "${YELLOW}                    Ham Radio Manager${NC}"
-    echo -e "${BLUE}              Professional Amateur Radio Suite Installer${NC}"
+    echo -e "${BLUE}              Professional Amateur Radio Suite for Linux${NC}"
     echo ""
 }
 
@@ -83,17 +83,64 @@ create_desktop_entry() {
 [Desktop Entry]
 Version=1.0
 Name=Hamster Ham Radio Manager
-Comment=Professional Amateur Radio Suite for ArkOS
+Comment=Professional Amateur Radio Suite (Adaptive Interface)
+Exec=$SCRIPT_DIR/hamster-launcher
+Icon=$SCRIPT_DIR/docs/hamster-icon.png
+Terminal=false
+Type=Application
+Categories=AudioVideo;HamRadio;Network;
+Keywords=ham;radio;aprs;sstv;direwolf;qsstv;amateur;adaptive;
+EOF
+    
+    # Create specific version entries
+    cat > "$desktop_dir/hamster-adaptive.desktop" << EOF
+[Desktop Entry]
+Version=1.0
+Name=Hamster (Adaptive GUI)
+Comment=Ham Radio Manager - Adaptive Interface
+Exec=$SCRIPT_DIR/hamster-adaptive.py
+Icon=$SCRIPT_DIR/docs/hamster-icon.png
+Terminal=false
+Type=Application
+Categories=AudioVideo;HamRadio;Network;
+Keywords=ham;radio;aprs;sstv;adaptive;touch;
+EOF
+
+    cat > "$desktop_dir/hamster-gui.desktop" << EOF
+[Desktop Entry]
+Version=1.0
+Name=Hamster (Gaming Console GUI)
+Comment=Ham Radio Manager - Gaming Console Interface
+Exec=$SCRIPT_DIR/hamster-gui.py
+Icon=$SCRIPT_DIR/docs/hamster-icon.png
+Terminal=false
+Type=Application
+Categories=AudioVideo;HamRadio;Network;
+Keywords=ham;radio;aprs;sstv;gaming;console;
+EOF
+    
+    # Also create terminal version entry
+    cat > "$desktop_dir/hamster-terminal.desktop" << EOF
+[Desktop Entry]
+Version=1.0
+Name=Hamster Ham Radio Manager (Terminal)
+Comment=Professional Amateur Radio Suite - Terminal Version
 Exec=$SCRIPT_DIR/hamster
 Icon=$SCRIPT_DIR/docs/hamster-icon.png
 Terminal=true
 Type=Application
 Categories=AudioVideo;HamRadio;Network;
-Keywords=ham;radio;aprs;sstv;direwolf;qsstv;amateur;
+Keywords=ham;radio;aprs;sstv;direwolf;qsstv;amateur;terminal;
 EOF
     
-    # Make it executable
+    # Make them executable
     chmod +x "$desktop_dir/hamster.desktop"
+    chmod +x "$desktop_dir/hamster-adaptive.desktop"
+    chmod +x "$desktop_dir/hamster-gui.desktop"
+    chmod +x "$desktop_dir/hamster-terminal.desktop"
+    chmod +x "$SCRIPT_DIR/hamster-adaptive.py"
+    chmod +x "$SCRIPT_DIR/hamster-gui.py"
+    chmod +x "$SCRIPT_DIR/hamster-launcher"
     
     echo -e "${GREEN}✓${NC} Desktop entry created"
 }
@@ -132,7 +179,7 @@ setup_autostart() {
     echo ""
     echo -e "${BLUE}Auto-start Configuration${NC}"
     echo -e "${YELLOW}Would you like Hamster to auto-start at boot?${NC}"
-    echo "This will make Hamster the primary interface on this ArkOS system."
+    echo "This will make Hamster the primary interface on this Linux system."
     echo "Perfect for dedicated ham radio stations."
     echo ""
     read -p "Enable auto-start? [y/N]: " -n 1 -r
@@ -207,7 +254,7 @@ show_summary() {
     echo "  • System logs: $SCRIPT_DIR/logs/"
     echo "  • Documentation: $SCRIPT_DIR/README.md"
     echo ""
-    echo -e "${GREEN}Your ArkOS system is now ready for amateur radio operations!${NC}"
+    echo -e "${GREEN}Your Linux system is now ready for amateur radio operations!${NC}"
     echo ""
 }
 
@@ -216,7 +263,7 @@ main() {
     show_header
     
     echo -e "${BLUE}This installer will set up Hamster Ham Radio Manager${NC}"
-    echo -e "${BLUE}for your ArkOS Linux system as a dedicated ham radio station.${NC}"
+    echo -e "${BLUE}for your Linux system as a dedicated ham radio station.${NC}"
     echo ""
     echo -e "${YELLOW}Professional ham radio features to be installed:${NC}"
     echo "  • APRS Chatty X launcher with direwolf integration"
