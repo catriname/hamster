@@ -16,7 +16,7 @@ BASE_DIR="$(dirname "$SCRIPT_DIR")"
 LOG_FILE="$BASE_DIR/logs/aprs_chatty_x.log"
 
 # Path to APRS Chatty X (adjust this path as needed)
-APRS_CHATTY_X_PATH="/home/ark/APRS-Chatty-X"
+APRS_CHATTY_X_PATH="$HOME/APRS-Chatty-X"
 APRS_EXECUTABLE="$APRS_CHATTY_X_PATH/APRS-Chatty-X/bin/Release/net6.0/APRS-Chatty-X"
 
 # Function to log messages
