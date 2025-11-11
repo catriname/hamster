@@ -103,11 +103,11 @@ check_build_tools() {
         echo -e "  ${RED}✗${NC} Make not found"
     fi
     
-    # CMake
-    if command_exists cmake; then
-        echo -e "  ${GREEN}✓${NC} CMake: $(cmake --version | head -1)"
+    # Autotools (alternative to CMake)
+    if command_exists autoconf; then
+        echo -e "  ${GREEN}✓${NC} Autotools: $(autoconf --version | head -1)"
     else
-        echo -e "  ${RED}✗${NC} CMake not found"
+        echo -e "  ${YELLOW}!${NC} Autotools not found (optional alternative to CMake)"
     fi
     echo ""
 }
@@ -206,9 +206,7 @@ show_summary() {
     if ! command_exists make; then
         missing_critical="$missing_critical make"
     fi
-    if ! command_exists cmake; then
-        missing_critical="$missing_critical cmake"
-    fi
+    # Note: CMake is no longer required - we use alternative build methods
     
     # Check applications
     if ! command_exists direwolf; then

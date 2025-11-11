@@ -27,32 +27,44 @@ show_header() {
     echo "    ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝"
     echo -e "${NC}"
     echo -e "${YELLOW}                    Ham Radio Manager${NC}"
-    echo -e "${BLUE}              Boot selector for Ark OS gaming console${NC}"
+    echo -e "${BLUE}              Professional Amateur Radio Suite${NC}"
     echo ""
 }
 
 # Function to show main menu
 show_main_menu() {
     show_header
-    echo -e "${GREEN}Select boot option:${NC}"
+    echo -e "${GREEN}Ham Radio Applications:${NC}"
     echo ""
-    echo "  1) Games (Default Ark OS)"
-    echo "  2) Ham Radio Manager"
-    echo "  3) System Settings"
+    echo "  1) APRS Chatty X - APRS Messaging"
+    echo "  2) QSSTV - Slow Scan TV"
+    echo "  3) Check Dependencies"
+    echo "  4) Install Dependencies"
+    echo "  5) System Settings"
     echo "  q) Quit"
     echo ""
-    read -p "Choose option [1-3, q]: " choice
+    read -p "Choose option [1-5, q]: " choice
     
     case $choice in
         1)
-            echo -e "${GREEN}Booting to games...${NC}"
-            # Return to default Ark OS behavior
-            exec /usr/bin/emulationstation
+            "$SCRIPTS_DIR/launch_aprs_chatty_x.sh"
+            show_main_menu
             ;;
         2)
-            show_ham_menu
+            "$SCRIPTS_DIR/launch_qsstv.sh"
+            show_main_menu
             ;;
         3)
+            "$SCRIPTS_DIR/check_dependencies.sh"
+            read -p "Press Enter to continue..."
+            show_main_menu
+            ;;
+        4)
+            "$SCRIPTS_DIR/install_dependencies.sh"
+            read -p "Press Enter to continue..."
+            show_main_menu
+            ;;
+        5)
             show_settings_menu
             ;;
         q|Q)
@@ -67,84 +79,73 @@ show_main_menu() {
     esac
 }
 
-# Function to show ham radio menu
-show_ham_menu() {
-    show_header
-    echo -e "${GREEN}Ham Radio Applications:${NC}"
-    echo ""
-    echo "  1) APRS Chatty X"
-    echo "  2) QSSTV (Slow Scan TV)"
-    echo "  3) Check Dependencies"
-    echo "  4) Install Dependencies"
-    echo "  b) Back to Main Menu"
-    echo ""
-    read -p "Choose option [1-4, b]: " choice
-    
-    case $choice in
-        1)
-            "$SCRIPTS_DIR/launch_aprs_chatty_x.sh"
-            show_ham_menu
-            ;;
-        2)
-            "$SCRIPTS_DIR/launch_qsstv.sh"
-            show_ham_menu
-            ;;
-        3)
-            "$SCRIPTS_DIR/check_dependencies.sh"
-            read -p "Press Enter to continue..."
-            show_ham_menu
-            ;;
-        4)
-            "$SCRIPTS_DIR/install_dependencies.sh"
-            read -p "Press Enter to continue..."
-            show_ham_menu
-            ;;
-        b|B)
-            show_main_menu
-            ;;
-        *)
-            echo -e "${RED}Invalid option. Please try again.${NC}"
-            sleep 2
-            show_ham_menu
-            ;;
-    esac
-}
 
 # Function to show settings menu
 show_settings_menu() {
     show_header
-    echo -e "${GREEN}System Settings:${NC}"
+    echo -e "${GREEN}Ham Radio System Settings:${NC}"
     echo ""
     echo "  1) Configure Audio Interface"
-    echo "  2) Network Settings"
+    echo "  2) Amateur Radio Settings"
     echo "  3) View System Info"
     echo "  4) Update Hamster"
+    echo "  5) Backup/Restore Settings"
     echo "  b) Back to Main Menu"
     echo ""
-    read -p "Choose option [1-4, b]: " choice
+    read -p "Choose option [1-5, b]: " choice
     
     case $choice in
         1)
-            echo -e "${YELLOW}Audio configuration not yet implemented${NC}"
-            sleep 2
+            echo -e "${BLUE}Available audio devices:${NC}"
+            if command -v aplay >/dev/null 2>&1; then
+                aplay -l 2>/dev/null | grep -E "^card"
+                echo ""
+                echo -e "${YELLOW}Audio configuration interface not yet implemented${NC}"
+                echo "Configure audio manually using alsamixer or pavucontrol"
+            else
+                echo -e "${RED}ALSA tools not installed${NC}"
+            fi
+            read -p "Press Enter to continue..."
             show_settings_menu
             ;;
         2)
-            echo -e "${YELLOW}Network settings not yet implemented${NC}"
-            sleep 2
+            echo -e "${BLUE}Amateur Radio Configuration:${NC}"
+            echo ""
+            echo -e "${YELLOW}Callsign and station settings not yet implemented${NC}"
+            echo "This will configure:"
+            echo "  • Station callsign"
+            echo "  • Grid square"
+            echo "  • Radio interface settings"
+            echo "  • Default frequencies"
+            read -p "Press Enter to continue..."
             show_settings_menu
             ;;
         3)
             echo -e "${BLUE}System Information:${NC}"
             echo "Kernel: $(uname -r)"
             echo "Architecture: $(uname -m)"
-            echo "Distribution: $(cat /etc/os-release | grep PRETTY_NAME | cut -d'"' -f2)"
+            echo "Distribution: $(cat /etc/os-release | grep PRETTY_NAME | cut -d'"' -f2 2>/dev/null || echo 'Unknown')"
             echo "Available space: $(df -h . | tail -1 | awk '{print $4}')"
+            echo "Uptime: $(uptime -p 2>/dev/null || uptime)"
             read -p "Press Enter to continue..."
             show_settings_menu
             ;;
         4)
             echo -e "${YELLOW}Update functionality not yet implemented${NC}"
+            echo "This will check for updates to:"
+            echo "  • Hamster Ham Radio Manager"
+            echo "  • APRS Chatty X"
+            echo "  • QSSTV"
+            echo "  • Direwolf"
+            sleep 2
+            show_settings_menu
+            ;;
+        5)
+            echo -e "${YELLOW}Backup/Restore not yet implemented${NC}"
+            echo "This will handle:"
+            echo "  • Configuration backup"
+            echo "  • Settings export/import"
+            echo "  • Log file management"
             sleep 2
             show_settings_menu
             ;;

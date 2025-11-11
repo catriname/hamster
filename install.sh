@@ -25,7 +25,7 @@ show_header() {
     echo "    ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝"
     echo -e "${NC}"
     echo -e "${YELLOW}                    Ham Radio Manager${NC}"
-    echo -e "${BLUE}              Installation for Ark OS Gaming Console${NC}"
+    echo -e "${BLUE}              Professional Amateur Radio Suite Installer${NC}"
     echo ""
 }
 
@@ -83,13 +83,13 @@ create_desktop_entry() {
 [Desktop Entry]
 Version=1.0
 Name=Hamster Ham Radio Manager
-Comment=Ham Radio Manager for Ark OS
+Comment=Professional Amateur Radio Suite for ArkOS
 Exec=$SCRIPT_DIR/hamster
 Icon=$SCRIPT_DIR/docs/hamster-icon.png
 Terminal=true
 Type=Application
-Categories=AudioVideo;HamRadio;
-Keywords=ham;radio;aprs;sstv;direwolf;qsstv;
+Categories=AudioVideo;HamRadio;Network;
+Keywords=ham;radio;aprs;sstv;direwolf;qsstv;amateur;
 EOF
     
     # Make it executable
@@ -132,7 +132,8 @@ setup_autostart() {
     echo ""
     echo -e "${BLUE}Auto-start Configuration${NC}"
     echo -e "${YELLOW}Would you like Hamster to auto-start at boot?${NC}"
-    echo "This will replace the default gaming interface with the Hamster menu."
+    echo "This will make Hamster the primary interface on this ArkOS system."
+    echo "Perfect for dedicated ham radio stations."
     echo ""
     read -p "Enable auto-start? [y/N]: " -n 1 -r
     echo ""
@@ -152,10 +153,12 @@ Exec=$SCRIPT_DIR/hamster
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
+Comment=Professional Amateur Radio Suite
 EOF
         
         echo -e "${GREEN}✓${NC} Auto-start configured"
         echo -e "${BLUE}Hamster will start automatically on next boot${NC}"
+        echo -e "${BLUE}This system is now configured as a dedicated ham radio station${NC}"
         
         # Offer to start now
         echo ""
@@ -168,38 +171,43 @@ EOF
     else
         echo -e "${BLUE}Auto-start not configured${NC}"
         echo -e "${YELLOW}You can run Hamster manually with: hamster${NC}"
+        echo -e "${BLUE}To set as default later, run the installer again${NC}"
     fi
 }
 
 # Function to show installation summary
 show_summary() {
     echo ""
-    echo -e "${GREEN}Installation Complete!${NC}"
-    echo "====================="
+    echo -e "${GREEN}Ham Radio Station Installation Complete!${NC}"
+    echo "========================================"
     echo ""
     echo -e "${BLUE}What was installed:${NC}"
-    echo "  ✓ Hamster Ham Radio Manager"
-    echo "  ✓ Menu system for application launcher"
-    echo "  ✓ Dependency check and installation scripts"
-    echo "  ✓ APRS Chatty X launcher"
-    echo "  ✓ QSSTV launcher"
-    echo "  ✓ Desktop integration"
+    echo "  ✓ Hamster Ham Radio Manager (Professional Suite)"
+    echo "  ✓ Integrated application launcher system"
+    echo "  ✓ Comprehensive dependency management"
+    echo "  ✓ APRS Chatty X launcher with direwolf"
+    echo "  ✓ QSSTV slow-scan television launcher"
+    echo "  ✓ Desktop and system integration"
     echo ""
-    echo -e "${BLUE}Next steps:${NC}"
-    echo "  1. Run dependency installer: sudo $SCRIPT_DIR/scripts/install_dependencies.sh"
-    echo "  2. Configure your amateur radio callsign in application settings"
+    echo -e "${BLUE}Essential next steps:${NC}"
+    echo "  1. Install ham radio applications: hamster → option 4"
+    echo "  2. Configure your amateur radio callsign and settings"
     echo "  3. Set up audio interface for radio connection"
-    echo "  4. Launch Hamster: hamster"
+    echo "  4. Test applications with your radio equipment"
     echo ""
-    echo -e "${BLUE}Quick start:${NC}"
-    echo "  • Run 'hamster' to start the menu system"
-    echo "  • Choose 'Ham Radio Manager' to access applications"
-    echo "  • Install dependencies when prompted"
+    echo -e "${BLUE}Quick start guide:${NC}"
+    echo "  • Run 'hamster' to access the ham radio suite"
+    echo "  • Use option 3 to check current dependencies"
+    echo "  • Use option 4 to install missing applications"
+    echo "  • Configure audio settings for your radio interface"
     echo ""
-    echo -e "${YELLOW}Documentation:${NC}"
-    echo "  • README: $SCRIPT_DIR/README.md"
-    echo "  • Logs: $SCRIPT_DIR/logs/"
-    echo "  • Config: $SCRIPT_DIR/config/"
+    echo -e "${YELLOW}Important files and directories:${NC}"
+    echo "  • Main application: $SCRIPT_DIR/hamster"
+    echo "  • Configuration: $SCRIPT_DIR/config/"
+    echo "  • System logs: $SCRIPT_DIR/logs/"
+    echo "  • Documentation: $SCRIPT_DIR/README.md"
+    echo ""
+    echo -e "${GREEN}Your ArkOS system is now ready for amateur radio operations!${NC}"
     echo ""
 }
 
@@ -208,13 +216,14 @@ main() {
     show_header
     
     echo -e "${BLUE}This installer will set up Hamster Ham Radio Manager${NC}"
-    echo -e "${BLUE}for your Linux gaming console running Ark OS.${NC}"
+    echo -e "${BLUE}for your ArkOS Linux system as a dedicated ham radio station.${NC}"
     echo ""
-    echo -e "${YELLOW}Features to be installed:${NC}"
-    echo "  • Boot menu for Games vs Ham Radio"
+    echo -e "${YELLOW}Professional ham radio features to be installed:${NC}"
     echo "  • APRS Chatty X launcher with direwolf integration"
     echo "  • QSSTV slow-scan television launcher"
-    echo "  • Automatic dependency management"
+    echo "  • Comprehensive dependency management"
+    echo "  • Audio interface configuration tools"
+    echo "  • Amateur radio station settings"
     echo ""
     
     read -p "Continue with installation? [y/N]: " -n 1 -r

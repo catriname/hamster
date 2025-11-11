@@ -1,19 +1,19 @@
 # Hamster - Ham Radio Manager
 
-A console wrapper for launching ham radio applications on Linux gaming consoles running Ark OS.
+A dedicated ham radio application manager for ArkOS Linux systems.
 
 ## Overview
 
-Hamster provides a simple menu interface to boot into either:
-- Your games (default Ark OS behavior)
-- Ham Radio Manager (launches ham radio applications)
+Hamster provides a comprehensive menu interface for managing and launching ham radio applications on ArkOS. This is a dedicated ham radio system that replaces the gaming interface with professional amateur radio tools.
 
 ## Features
 
-- **APRS Chatty X Launcher**: Automatically checks for and installs direwolf dependency
-- **QSSTV Launcher**: Slow-scan television application
-- **Dependency Management**: Automatic installation of required packages
-- **Lightweight Design**: Minimal footprint (~50MB total)
+- **Complete Ham Radio Suite**: Dedicated environment for amateur radio operations
+- **APRS Chatty X**: APRS messaging client with integrated direwolf TNC
+- **QSSTV**: Slow-scan television application for image transmission
+- **Dependency Management**: Automatic installation and configuration of all required packages
+- **Professional Interface**: Clean, organized menu system designed for radio operators
+- **Audio Management**: Integrated audio interface configuration for radio connections
 
 ## Supported Applications
 
@@ -37,21 +37,21 @@ cd hamster
 
 ## Requirements
 
-- Linux (Ark OS or compatible)
-- ~30GB available space (plenty of headroom)
-- Audio interface for radio operations
-- Git and basic build tools
+- ArkOS Linux or compatible Linux distribution
+- ~10GB available space for complete ham radio suite
+- Audio interface for radio operations (USB or built-in)
+- Internet connection for dependency installation
+- Amateur radio license for transmission operations
 
 ## Project Structure
 
 ```
 hamster/
 ├── bin/              # Compiled binaries and executables
-├── scripts/          # Installation and setup scripts
-├── config/           # Default configurations
-├── menu/             # Menu system implementation
-├── deps/             # Dependency management
-└── docs/             # Documentation
+├── scripts/          # Installation, setup, and launcher scripts
+├── config/           # Application configurations and profiles
+├── logs/             # Application and system logs
+└── docs/             # Documentation and user guides
 ```
 
 ## License
