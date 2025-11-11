@@ -22,6 +22,55 @@ BLUETOOTH_ENABLED=false
 CURRENT_SELECTION=1
 MAX_SELECTION=5
 
+# Function to ensure script permissions and handle sudo
+install_dependencies_with_permissions() {
+    echo -e "${BLUE}Preparing dependency installation...${NC}"
+    
+    # Ensure all scripts have execute permissions
+    echo -e "${BLUE}Setting script permissions...${NC}"
+    chmod +x "$SCRIPTS_DIR"/*.sh 2>/dev/null || {
+        echo -e "${YELLOW}Note: Some scripts may need manual permission fixes${NC}"
+    }
+    
+    # Check if dependency script exists
+    if [ ! -f "$SCRIPTS_DIR/install_dependencies.sh" ]; then
+        echo -e "${RED}Error: Dependency installation script not found${NC}"
+        return 1
+    fi
+    
+    # Make sure the script is executable
+    if [ ! -x "$SCRIPTS_DIR/install_dependencies.sh" ]; then
+        echo -e "${BLUE}Making dependency script executable...${NC}"
+        chmod +x "$SCRIPTS_DIR/install_dependencies.sh" || {
+            echo -e "${RED}Error: Cannot make script executable${NC}"
+            return 1
+        }
+    fi
+    
+    # Check if we need sudo for installation
+    echo -e "${BLUE}Installing ham radio dependencies...${NC}"
+    echo -e "${YELLOW}Note: This may require administrator privileges${NC}"
+    
+    # Try to run the script, request sudo if needed
+    if ! "$SCRIPTS_DIR/install_dependencies.sh"; then
+        echo -e "${YELLOW}Installation failed. Trying with administrator privileges...${NC}"
+        echo -e "${BLUE}You may be prompted for your password${NC}"
+        sudo "$SCRIPTS_DIR/install_dependencies.sh"
+    fi
+}
+
+# Function to ensure check script permissions  
+check_dependencies_with_permissions() {
+    # Ensure script has execute permissions
+    if [ -f "$SCRIPTS_DIR/check_dependencies.sh" ]; then
+        chmod +x "$SCRIPTS_DIR/check_dependencies.sh" 2>/dev/null
+        "$SCRIPTS_DIR/check_dependencies.sh"
+    else
+        echo -e "${RED}Error: Dependency check script not found${NC}"
+        return 1
+    fi
+}
+
 # Check for gamepad support tools
 check_controller_support() {
     # Check for common gamepad tools
@@ -178,12 +227,16 @@ show_main_menu() {
             show_main_menu
             ;;
         3)
-            "$SCRIPTS_DIR/check_dependencies.sh"
+            # Check dependencies with automatic permission handling
+            check_dependencies_with_permissions
             read -p "Press Enter to continue..."
             show_main_menu
             ;;
         4)
-            "$SCRIPTS_DIR/install_dependencies.sh"
+            # Ensure script permissions and install dependencies
+            if ! install_dependencies_with_permissions; then
+                echo -e "${RED}Failed to install dependencies${NC}"
+            fi
             read -p "Press Enter to continue..."
             show_main_menu
             ;;
