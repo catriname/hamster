@@ -605,7 +605,8 @@ class SystemInfoWindow:
                 with open('/etc/os-release', 'r') as f:
                     for line in f:
                         if 'PRETTY_NAME=' in line:
-                            info += f"OS: {line.split('=')[1].strip().strip('\"')}\n"
+                            os_name = line.split('=')[1].strip().strip('"')
+                            info += f"OS: {os_name}\n"
                             break
             except:
                 info += "OS: Unknown\n"
