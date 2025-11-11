@@ -583,25 +583,37 @@ install_qsstv() {
 
 # Function to install additional ham radio tools
 install_ham_tools() {
-    log "${BLUE}Installing additional ham radio tools...${NC}"
+    log "${BLUE}Installing additional ham radio tools and controller support...${NC}"
     
     case "$PACKAGE_MANAGER" in
         apt)
             apt install -y pavucontrol alsamixer pulseaudio-utils sox \
-                          minicom picocom socat screen
+                          minicom picocom socat screen \
+                          joystick jstest-gtk evtest \
+                          network-manager nmcli \
+                          ssh openssh-server \
+                          bluetooth bluez bluez-tools
             ;;
         yum)
             yum install -y pavucontrol alsa-utils pulseaudio-utils sox \
-                          minicom picocom socat screen
+                          minicom picocom socat screen \
+                          joystick evtest \
+                          NetworkManager \
+                          openssh-server \
+                          bluez bluez-utils
             ;;
         pacman)
             pacman -S --noconfirm pavucontrol alsa-utils pulseaudio sox \
-                          minicom picocom socat screen
+                          minicom picocom socat screen \
+                          joyutils evtest \
+                          networkmanager \
+                          openssh \
+                          bluez bluez-utils
             ;;
     esac
     
     if [ $? -eq 0 ]; then
-        log "${GREEN}✓${NC} Ham radio tools installed"
+        log "${GREEN}✓${NC} Ham radio tools, controller support, and Bluetooth installed"
     else
         log "${YELLOW}!${NC} Some ham radio tools may not have installed"
     fi

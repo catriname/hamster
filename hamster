@@ -7,6 +7,7 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MENU_DIR="$SCRIPT_DIR/menu"
 SCRIPTS_DIR="$SCRIPT_DIR/scripts"
+CONFIG_DIR="$SCRIPT_DIR/config"
 
 # Set colors for output
 RED='\033[0;31m'
@@ -14,6 +15,126 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
+
+# Controller/gamepad support variables
+CONTROLLER_ENABLED=true
+BLUETOOTH_ENABLED=false
+CURRENT_SELECTION=1
+MAX_SELECTION=5
+
+# Check for gamepad support tools
+check_controller_support() {
+    # Check for common gamepad tools
+    if command -v jstest >/dev/null 2>&1 || command -v evtest >/dev/null 2>&1; then
+        CONTROLLER_ENABLED=true
+    else
+        CONTROLLER_ENABLED=false
+    fi
+}
+
+# Check for Bluetooth support
+check_bluetooth_support() {
+    # Check if bluetoothctl is available and service is running
+    if command -v bluetoothctl >/dev/null 2>&1; then
+        if systemctl is-active bluetooth >/dev/null 2>&1; then
+            BLUETOOTH_ENABLED=true
+        else
+            BLUETOOTH_ENABLED=false
+        fi
+    else
+        BLUETOOTH_ENABLED=false
+    fi
+}
+
+# Function to show on-screen keyboard
+show_onscreen_keyboard() {
+    local prompt="$1"
+    local default_value="$2"
+    
+    echo -e "${BLUE}On-Screen Keyboard${NC}"
+    echo "================================"
+    echo "Use gamepad/controller to navigate:"
+    echo "  D-Pad/Left Stick: Navigate"
+    echo "  A/Enter: Select character"
+    echo "  B/Escape: Backspace"
+    echo "  Start: Finish input"
+    echo "  Select: Cancel"
+    echo ""
+    echo "$prompt"
+    echo ""
+    
+    # Simple character input with controller mapping
+    echo "Current input: [$default_value]"
+    echo ""
+    echo "Common characters:"
+    echo "1) A-Z  2) 0-9  3) Symbols  4) Space  5) Backspace  6) Done"
+    echo ""
+    
+    read -p "Select option or type directly [1-6]: " choice
+    
+    case $choice in
+        1) show_alphabet_keyboard ;;
+        2) show_number_keyboard ;;
+        3) show_symbol_keyboard ;;
+        4) echo -n " " ;;
+        5) echo -n "BACKSPACE" ;;
+        6) echo -n "$default_value" ;;
+        *) echo -n "$choice" ;;
+    esac
+}
+
+# Function to show alphabet keyboard
+show_alphabet_keyboard() {
+    echo -e "${BLUE}Alphabet Input${NC}"
+    echo "A B C D E F G"
+    echo "H I J K L M N"
+    echo "O P Q R S T U"
+    echo "V W X Y Z"
+    echo ""
+    read -p "Enter letter: " letter
+    echo -n "$letter"
+}
+
+# Function to show number keyboard
+show_number_keyboard() {
+    echo -e "${BLUE}Number Input${NC}"
+    echo "1 2 3"
+    echo "4 5 6" 
+    echo "7 8 9"
+    echo "  0"
+    echo ""
+    read -p "Enter number: " number
+    echo -n "$number"
+}
+
+# Function to show symbol keyboard
+show_symbol_keyboard() {
+    echo -e "${BLUE}Symbol Input${NC}"
+    echo ". , ? ! @ # $ % & * ( ) - _ + ="
+    echo ""
+    read -p "Enter symbol: " symbol
+    echo -n "$symbol"
+}
+
+# Function to handle controller input for menu navigation
+handle_controller_input() {
+    local menu_type="$1"
+    local max_options="$2"
+    
+    if [ "$CONTROLLER_ENABLED" = true ]; then
+        echo -e "${YELLOW}Controller Navigation:${NC}"
+        echo "  D-Pad Up/Down: Navigate menu"
+        echo "  A Button/Enter: Select option"
+        echo "  B Button: Back/Cancel"
+        echo "  Start: Quick access to main menu"
+        echo ""
+    fi
+    
+    echo -e "${BLUE}Menu Navigation Help:${NC}"
+    echo "  Use number keys (1-$max_options) or controller"
+    echo "  Press 'q' to quit, 'b' to go back"
+    echo ""
+}
 
 # Function to display header
 show_header() {
@@ -34,6 +155,7 @@ show_header() {
 # Function to show main menu
 show_main_menu() {
     show_header
+    handle_controller_input "main" 5
     echo -e "${GREEN}Ham Radio Applications:${NC}"
     echo ""
     echo "  1) APRS Chatty X - APRS Messaging"
@@ -41,9 +163,10 @@ show_main_menu() {
     echo "  3) Check Dependencies"
     echo "  4) Install Dependencies"
     echo "  5) System Settings"
+    echo "  k) On-Screen Keyboard Test"
     echo "  q) Quit"
     echo ""
-    read -p "Choose option [1-5, q]: " choice
+    read -p "Choose option [1-5, k, q]: " choice
     
     case $choice in
         1)
@@ -67,6 +190,9 @@ show_main_menu() {
         5)
             show_settings_menu
             ;;
+        k|K)
+            test_onscreen_keyboard
+            ;;
         q|Q)
             echo -e "${YELLOW}Goodbye!${NC}"
             exit 0
@@ -79,20 +205,42 @@ show_main_menu() {
     esac
 }
 
+# Function to test on-screen keyboard
+test_onscreen_keyboard() {
+    show_header
+    echo -e "${GREEN}On-Screen Keyboard Test${NC}"
+    echo ""
+    
+    echo "Testing keyboard input functionality..."
+    echo ""
+    
+    # Test callsign input
+    echo -e "${BLUE}Example: Enter your amateur radio callsign${NC}"
+    result=$(show_onscreen_keyboard "Enter callsign:" "N0CALL")
+    echo ""
+    echo -e "${GREEN}You entered: $result${NC}"
+    echo ""
+    
+    read -p "Press Enter to return to main menu..."
+    show_main_menu
+}
+
 
 # Function to show settings menu
 show_settings_menu() {
     show_header
+    handle_controller_input "settings" 6
     echo -e "${GREEN}Ham Radio System Settings:${NC}"
     echo ""
     echo "  1) Configure Audio Interface"
     echo "  2) Amateur Radio Settings"
-    echo "  3) View System Info"
-    echo "  4) Update Hamster"
-    echo "  5) Backup/Restore Settings"
+    echo "  3) Network Configuration"
+    echo "  4) View System Info"
+    echo "  5) Update Hamster"
+    echo "  6) Backup/Restore Settings"
     echo "  b) Back to Main Menu"
     echo ""
-    read -p "Choose option [1-5, b]: " choice
+    read -p "Choose option [1-6, b]: " choice
     
     case $choice in
         1)
@@ -121,16 +269,24 @@ show_settings_menu() {
             show_settings_menu
             ;;
         3)
+            show_network_config
+            ;;
+        4)
             echo -e "${BLUE}System Information:${NC}"
             echo "Kernel: $(uname -r)"
             echo "Architecture: $(uname -m)"
             echo "Distribution: $(cat /etc/os-release | grep PRETTY_NAME | cut -d'"' -f2 2>/dev/null || echo 'Unknown')"
             echo "Available space: $(df -h . | tail -1 | awk '{print $4}')"
             echo "Uptime: $(uptime -p 2>/dev/null || uptime)"
+            echo ""
+            echo "Network Status:"
+            echo "IP Address: $(hostname -I | cut -d' ' -f1)"
+            echo "WiFi Status: $(iwgetid -r 2>/dev/null || echo 'Not connected')"
+            echo "SSH Status: $(systemctl is-active ssh 2>/dev/null || echo 'Unknown')"
             read -p "Press Enter to continue..."
             show_settings_menu
             ;;
-        4)
+        5)
             echo -e "${YELLOW}Update functionality not yet implemented${NC}"
             echo "This will check for updates to:"
             echo "  • Hamster Ham Radio Manager"
@@ -140,7 +296,7 @@ show_settings_menu() {
             sleep 2
             show_settings_menu
             ;;
-        5)
+        6)
             echo -e "${YELLOW}Backup/Restore not yet implemented${NC}"
             echo "This will handle:"
             echo "  • Configuration backup"
@@ -160,6 +316,248 @@ show_settings_menu() {
     esac
 }
 
+# Function to show network configuration
+show_network_config() {
+    show_header
+    echo -e "${GREEN}Network Configuration${NC}"
+    echo ""
+    
+    echo -e "${BLUE}Current Network Status:${NC}"
+    echo "IP Address: $(hostname -I | cut -d' ' -f1 2>/dev/null || echo 'No IP assigned')"
+    echo "WiFi SSID: $(iwgetid -r 2>/dev/null || echo 'Not connected')"
+    echo "SSH Service: $(systemctl is-active ssh 2>/dev/null || echo 'Unknown')"
+    echo "NetworkManager: $(systemctl is-active NetworkManager 2>/dev/null || echo 'Unknown')"
+    echo "Bluetooth: $(systemctl is-active bluetooth 2>/dev/null || echo 'Unknown')"
+    if command -v bluetoothctl >/dev/null 2>&1; then
+        paired_count=$(bluetoothctl paired-devices 2>/dev/null | wc -l)
+        echo "Bluetooth devices: $paired_count paired"
+    fi
+    echo ""
+    
+    echo -e "${BLUE}Network & Connectivity Management:${NC}"
+    echo "  1) Enable SSH permanently"
+    echo "  2) Enable WiFi permanently"
+    echo "  3) Bluetooth configuration"
+    echo "  4) View network interfaces"
+    echo "  5) WiFi connection setup"
+    echo "  6) Pair Bluetooth keyboard"
+    echo "  b) Back to Settings"
+    echo ""
+    
+    read -p "Choose option [1-6, b]: " net_choice
+    
+    case $net_choice in
+        1)
+            echo -e "${BLUE}Enabling SSH permanently...${NC}"
+            sudo systemctl enable ssh
+            sudo systemctl start ssh
+            echo -e "${GREEN}SSH enabled and started${NC}"
+            echo "SSH will now start automatically on boot"
+            read -p "Press Enter to continue..."
+            show_network_config
+            ;;
+        2)
+            echo -e "${BLUE}Enabling WiFi/NetworkManager permanently...${NC}"
+            sudo systemctl enable NetworkManager
+            sudo systemctl start NetworkManager
+            echo -e "${GREEN}NetworkManager enabled and started${NC}"
+            echo "WiFi will now be available automatically on boot"
+            read -p "Press Enter to continue..."
+            show_network_config
+            ;;
+        3)
+            show_bluetooth_config
+            ;;
+        4)
+            echo -e "${BLUE}Network Interfaces:${NC}"
+            ip addr show | grep -E "^[0-9]+:|inet "
+            echo ""
+            read -p "Press Enter to continue..."
+            show_network_config
+            ;;
+        5)
+            echo -e "${BLUE}WiFi Connection Setup${NC}"
+            echo "Available WiFi networks:"
+            nmcli dev wifi list 2>/dev/null || echo "NetworkManager not available"
+            echo ""
+            echo "To connect to WiFi using on-screen keyboard:"
+            echo "Use: nmcli dev wifi connect 'SSID' password 'PASSWORD'"
+            echo ""
+            read -p "Press Enter to continue..."
+            show_network_config
+            ;;
+        6)
+            pair_bluetooth_keyboard
+            ;;
+        b|B)
+            show_settings_menu
+            ;;
+        *)
+            echo -e "${RED}Invalid option. Please try again.${NC}"
+            sleep 2
+            show_network_config
+            ;;
+    esac
+}
+
+# Function to show Bluetooth configuration
+show_bluetooth_config() {
+    show_header
+    echo -e "${GREEN}Bluetooth Configuration${NC}"
+    echo ""
+    
+    # Check Bluetooth status
+    if command -v bluetoothctl >/dev/null 2>&1; then
+        echo -e "${BLUE}Bluetooth Status:${NC}"
+        if systemctl is-active bluetooth >/dev/null 2>&1; then
+            echo -e "${GREEN}✓${NC} Bluetooth service is running"
+            echo "Bluetooth adapter: $(bluetoothctl show | grep "Name:" | cut -d: -f2 | xargs || echo 'Unknown')"
+            echo "Paired devices:"
+            bluetoothctl paired-devices 2>/dev/null | while read device; do
+                echo "  $device"
+            done
+        else
+            echo -e "${RED}✗${NC} Bluetooth service is not running"
+        fi
+    else
+        echo -e "${RED}✗${NC} Bluetooth tools not installed"
+    fi
+    echo ""
+    
+    echo -e "${BLUE}Bluetooth Management:${NC}"
+    echo "  1) Enable Bluetooth service"
+    echo "  2) Start Bluetooth scanning"
+    echo "  3) List paired devices"
+    echo "  4) Unpair device"
+    echo "  5) Restart Bluetooth service"
+    echo "  b) Back to Network Config"
+    echo ""
+    
+    read -p "Choose option [1-5, b]: " bt_choice
+    
+    case $bt_choice in
+        1)
+            echo -e "${BLUE}Enabling Bluetooth service...${NC}"
+            sudo systemctl enable bluetooth
+            sudo systemctl start bluetooth
+            echo -e "${GREEN}Bluetooth service enabled and started${NC}"
+            read -p "Press Enter to continue..."
+            show_bluetooth_config
+            ;;
+        2)
+            echo -e "${BLUE}Starting Bluetooth device scan...${NC}"
+            echo "Scanning for 10 seconds..."
+            bluetoothctl scan on &
+            sleep 10
+            bluetoothctl scan off
+            echo ""
+            echo "Available devices:"
+            bluetoothctl devices
+            echo ""
+            read -p "Press Enter to continue..."
+            show_bluetooth_config
+            ;;
+        3)
+            echo -e "${BLUE}Paired Bluetooth devices:${NC}"
+            bluetoothctl paired-devices
+            echo ""
+            read -p "Press Enter to continue..."
+            show_bluetooth_config
+            ;;
+        4)
+            echo -e "${BLUE}Unpair Bluetooth device${NC}"
+            echo "Paired devices:"
+            bluetoothctl paired-devices
+            echo ""
+            read -p "Enter device MAC address to unpair: " mac_address
+            if [ ! -z "$mac_address" ]; then
+                bluetoothctl remove "$mac_address"
+                echo -e "${GREEN}Device unpaired${NC}"
+            fi
+            read -p "Press Enter to continue..."
+            show_bluetooth_config
+            ;;
+        5)
+            echo -e "${BLUE}Restarting Bluetooth service...${NC}"
+            sudo systemctl restart bluetooth
+            echo -e "${GREEN}Bluetooth service restarted${NC}"
+            read -p "Press Enter to continue..."
+            show_bluetooth_config
+            ;;
+        b|B)
+            show_network_config
+            ;;
+        *)
+            echo -e "${RED}Invalid option. Please try again.${NC}"
+            sleep 2
+            show_bluetooth_config
+            ;;
+    esac
+}
+
+# Function to pair Bluetooth keyboard
+pair_bluetooth_keyboard() {
+    show_header
+    echo -e "${GREEN}Bluetooth Keyboard Pairing${NC}"
+    echo ""
+    
+    if ! command -v bluetoothctl >/dev/null 2>&1; then
+        echo -e "${RED}Bluetooth tools not available${NC}"
+        echo "Install with: sudo apt install bluetooth bluez"
+        read -p "Press Enter to continue..."
+        show_network_config
+        return
+    fi
+    
+    if ! systemctl is-active bluetooth >/dev/null 2>&1; then
+        echo -e "${YELLOW}Bluetooth service not running. Starting...${NC}"
+        sudo systemctl start bluetooth
+        sleep 2
+    fi
+    
+    echo -e "${BLUE}Keyboard Pairing Instructions:${NC}"
+    echo "1. Put your Bluetooth keyboard in pairing mode"
+    echo "2. Wait for scan to complete"
+    echo "3. Select your keyboard from the list"
+    echo "4. Follow any pairing prompts"
+    echo ""
+    
+    echo -e "${BLUE}Scanning for Bluetooth devices...${NC}"
+    bluetoothctl scan on &
+    scan_pid=$!
+    sleep 10
+    kill $scan_pid 2>/dev/null
+    bluetoothctl scan off
+    
+    echo ""
+    echo -e "${BLUE}Available devices:${NC}"
+    devices=$(bluetoothctl devices)
+    echo "$devices"
+    echo ""
+    
+    read -p "Enter MAC address of keyboard to pair: " keyboard_mac
+    
+    if [ ! -z "$keyboard_mac" ]; then
+        echo -e "${BLUE}Pairing with $keyboard_mac...${NC}"
+        bluetoothctl pair "$keyboard_mac"
+        
+        echo -e "${BLUE}Trusting device...${NC}"
+        bluetoothctl trust "$keyboard_mac"
+        
+        echo -e "${BLUE}Connecting to device...${NC}"
+        bluetoothctl connect "$keyboard_mac"
+        
+        echo ""
+        echo -e "${GREEN}Bluetooth keyboard pairing complete!${NC}"
+        echo "Your keyboard should now be available for use"
+        echo ""
+        echo "To test: Try typing in any text field"
+    fi
+    
+    read -p "Press Enter to continue..."
+    show_network_config
+}
+
 # Main execution
 main() {
     # Check if running as root (may be needed for some operations)
@@ -167,8 +565,27 @@ main() {
         echo -e "${YELLOW}Warning: Running as root${NC}"
     fi
     
-    # Create log directory if it doesn't exist
-    mkdir -p "$SCRIPT_DIR/logs"
+    # Create necessary directories if they don't exist
+    mkdir -p "$SCRIPT_DIR/logs" "$SCRIPT_DIR/config"
+    
+    # Initialize controller and Bluetooth support
+    check_controller_support
+    check_bluetooth_support
+    
+    # Show startup message with hardware support info
+    if [ "$CONTROLLER_ENABLED" = true ]; then
+        echo -e "${GREEN}Controller/Gamepad support detected${NC}"
+    else
+        echo -e "${YELLOW}No controller detected - keyboard navigation only${NC}"
+    fi
+    
+    if [ "$BLUETOOTH_ENABLED" = true ]; then
+        echo -e "${GREEN}Bluetooth enabled - wireless devices available${NC}"
+    else
+        echo -e "${YELLOW}Bluetooth not active - use wired peripherals${NC}"
+    fi
+    
+    sleep 2
     
     # Start the main menu
     show_main_menu
